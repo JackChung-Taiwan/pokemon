@@ -7,22 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         /* =========================================
-           1. 基礎設定 (緊湊佈局)
+           1. 基礎設定
         ========================================= */
         * { box-sizing: border-box; font-family: 'Nunito', sans-serif; }
         body {
             background-color: #232323;
             background-image: radial-gradient(circle at center, #444 0%, #222 100%);
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            min-height: 100vh; 
-            color: #eee; 
-            touch-action: manipulation; 
-            padding: 10px; /* 減少邊距 */
-            gap: 15px; /* 控制遊戲機與頁尾的距離，讓它們靠近 */
+            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; color: #eee; touch-action: manipulation; padding: 10px; gap: 15px;
         }
 
         /* =========================================
@@ -30,24 +22,13 @@
         ========================================= */
         .pokedex-frame {
             position: relative;
-            width: 100%;
-            max-width: 800px;
-            /* 使用 Flex 讓高度自動適應內容，不再強制撐大 */
-            aspect-ratio: 3/4; 
-            max-height: 85vh; /* 確保不超過手機高度 */
+            width: 100%; max-width: 800px; aspect-ratio: 3/4; max-height: 85vh;
             background: linear-gradient(145deg, #FF5E75, #DC0A2D);
-            border-radius: 30px;
-            padding: 15px;
+            border-radius: 30px; padding: 15px;
             box-shadow: inset 5px 5px 15px rgba(255,255,255,0.4), inset -5px -5px 15px rgba(0,0,0,0.3), 0 20px 40px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 0; /* 移除底部邊距，讓頁尾靠近 */
+            display: flex; flex-direction: column; margin-bottom: 0;
         }
-
-        .pokedex-top {
-            display: flex; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px;
-            border-bottom: 3px solid rgba(0,0,0,0.2); flex-shrink: 0;
-        }
+        .pokedex-top { display: flex; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 3px solid rgba(0,0,0,0.2); flex-shrink: 0; }
         .camera-lens { width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #4FC3F7, #01579B); border-radius: 50%; border: 4px solid #eee; box-shadow: 0 0 15px rgba(79, 195, 247, 0.8); margin-right: 15px; animation: pulse 3s infinite; }
         .small-lights { display: flex; gap: 8px; margin-top: 5px; }
         .light { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.3); box-shadow: inset 2px 2px 5px rgba(255,255,255,0.5); }
@@ -57,18 +38,14 @@
            3. 螢幕與遊戲區
         ========================================= */
         #game-wrapper {
-            position: relative;
-            width: 100%;
-            flex-grow: 1; /* 填滿剩餘空間 */
+            position: relative; width: 100%; flex-grow: 1;
             background: #222; border-radius: 20px; border: 4px solid #555; overflow: hidden; box-shadow: inset 0 0 20px #000;
             display: flex; flex-direction: column;
         }
-
         #game-container {
             width: 100%; height: 100%;
             background: linear-gradient(to bottom, #90CAF9, #E0E0E0);
-            padding: 15px; display: none; flex-direction: column; position: relative; z-index: 10;
-            flex-grow: 1;
+            padding: 15px; display: none; flex-direction: column; position: relative; z-index: 10; flex-grow: 1;
         }
         #game-container[style*="display: block"] { display: flex !important; }
 
@@ -82,25 +59,14 @@
         .pika-svg { width: 100%; height: 100%; }
         .listen-hint { font-size: 0.8rem; color: #555; text-align: center; margin-bottom: 10px; font-weight: bold; flex-shrink: 0;}
 
-        /* --- SVG 選項按鈕 --- */
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            flex-grow: 1;
-            /* 讓按鈕區自動伸縮，不設固定高度 */
-            align-items: center;
-            justify-items: center;
-        }
+        /* --- 選項按鈕 --- */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex-grow: 1; align-items: center; justify-items: center; }
         .option-btn {
             background: #FFF; border-radius: 15px; cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             display: flex; align-items: center; justify-content: center;
             padding: 8px; transition: all 0.2s; border: 3px solid transparent;
-            width: 100%;
-            height: 100%; /* 填滿網格 */
-            aspect-ratio: 1 / 1; /* 保持方形 */
-            max-height: 140px; /* 稍微縮小最大高度，適應手機 */
+            width: 100%; height: 100%; aspect-ratio: 1 / 1; max-height: 140px;
         }
         .option-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .option-svg { width: 100%; height: 100%; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
@@ -108,62 +74,53 @@
         .wrong { background-color: #FFCDD2 !important; border-color: #C62828 !important; opacity: 0.6; pointer-events: none; }
 
         /* =========================================
-           4. 選單、標題與頁尾優化
+           4. 【修改】拼字特效 (上移 + 黑色描邊)
         ========================================= */
-        #menu-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; color: #eee; padding: 20px; text-align: center; }
-
-        #title-text {
-            font-size: 2.2rem;
-            margin: 10px 0 15px 0;
-            color: #ffffff;
-            text-shadow: 0 3px 5px rgba(0,0,0,0.3);
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        /* 頁尾樣式 (優化版) */
-        .site-footer {
-            /* 移除 top margin，靠 gap 控制距離 */
-            margin-top: 0; 
-            padding: 8px 20px;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap; /* 手機寬度不夠時自動換行 */
-            gap: 10px;
+        #spelling-overlay { 
+            position: absolute;
+            /* 1. 位置上移：設為 25% (皮卡丘附近)，避開下方按鈕 */
+            top: 25%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: 4rem; 
+            font-weight: 900; 
+            color: #FFD700; /* 金黃色內填 */
             
-            /* 增加一個很淡的背景條，連結視覺 */
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
+            /* 2. 強力黑色描邊 */
+            -webkit-text-stroke: 3px #000; /* Chrome/Safari */
+            text-shadow: 5px 5px 0 #000; /* 實心黑色陰影，增加厚度感 */
+            
+            opacity: 0; 
+            pointer-events: none; 
+            z-index: 30; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            text-transform: uppercase; 
+            width: 100%; 
+            text-align: center;
+            letter-spacing: 2px;
         }
-        
-        .footer-gold {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #FFD700; /* 金黃色 */
-            text-shadow: 2px 2px 0 #000; /* 黑色陰影增加對比 */
-        }
-        
-        .footer-green {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: #2E7D32; /* 深綠色 */
-            /* 移除描邊，改用淺色圓角膠囊背景 */
-            background-color: #E8F5E9; /* 淺綠白色背景 */
-            padding: 5px 15px;
-            border-radius: 50px; /* 圓弧造型 */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            text-shadow: none; /* 移除文字陰影，保持乾淨 */
+        .show-spelling { 
+            opacity: 1 !important; 
+            transform: translate(-50%, -50%) scale(1.2) !important; 
         }
 
+        /* 選單與其他 */
+        #menu-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; color: #eee; padding: 20px; text-align: center; }
+        #title-text { font-size: 2.2rem; margin: 10px 0 15px 0; color: #ffffff; text-shadow: 0 3px 5px rgba(0,0,0,0.3); font-weight: 900; letter-spacing: 1px; }
         .btn-start { padding: 12px 40px; font-size: 1.2rem; background: linear-gradient(to right, #3B4CCA, #5C6BC0); color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px; box-shadow: 0 10px 20px rgba(59, 76, 202, 0.4); font-weight: 900; transition: transform 0.2s;}
         .btn-start:active { transform: scale(0.95); }
-        #spelling-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-size: 3.5rem; font-weight: 900; color: #FFCB05; text-shadow: 2px 2px 0 #3B4CCA, 0 0 20px rgba(255,203,5,0.5); opacity: 0; pointer-events: none; z-index: 30; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; width: 100%; text-align: center; }
-        .show-spelling { opacity: 1 !important; transform: translate(-50%, -50%) scale(1) !important; }
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
         .best-score-box { background: rgba(255,255,255,0.15); border: 2px solid #FFCB05; color: #FFCB05; padding: 5px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem;}
+
+        /* =========================================
+           5. 頁尾
+        ========================================= */
+        .site-footer {
+            margin-top: 0; padding: 8px 20px; text-align: center; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px;
+            background: rgba(255, 255, 255, 0.1); border-radius: 20px; backdrop-filter: blur(5px);
+        }
+        .footer-gold { font-size: 1.4rem; font-weight: 900; color: #FFD700; text-shadow: 2px 2px 0 #000; }
+        .footer-green { font-size: 1.2rem; font-weight: 900; color: #2E7D32; background-color: #E8F5E9; padding: 5px 15px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(79, 195, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
@@ -262,7 +219,6 @@
             { w: "Rocket", t: "rocket" }
         ];
 
-        // 交通工具 SVG 繪圖函式 (黑色描邊增強)
         function getSVG(type) {
             let c = ''; 
             const s = 'stroke="#333" stroke-width="3"'; 
