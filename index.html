@@ -56,17 +56,8 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(5px); flex-shrink: 0;
         }
         
-        /* 調整 HUD 排版，讓時間在左，分數在右 */
         .hud-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 1.1rem;}
         
-        /* 計時器樣式：使用等寬數字防止跳動 */
-        .stopwatch { 
-            font-family: 'Courier New', monospace; 
-            font-weight: bold; 
-            color: #D32F2F;
-            font-variant-numeric: tabular-nums; /* 關鍵：讓數字等寬 */
-        }
-
         .progress-container { width: 100%; height: 10px; background: #E0E0E0; border-radius: 5px; overflow: hidden; border: 1px solid #ccc; }
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #FFC107, #FF9800); transition: width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); }
 
@@ -113,20 +104,46 @@
         .win-message { font-size: 3rem; color: #FFD700; text-shadow: 0 0 20px #E65100; margin-bottom: 5px; font-weight: 900; line-height: 1.2;}
         .best-score-box { background: rgba(255,255,255,0.15); border: 2px solid #FFCB05; color: #FFCB05; padding: 5px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem;}
         
-        /* 完賽時間顯示 */
         .time-result { font-size: 1.8rem; color: #fff; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 2px 0 #333; }
 
         /* =========================================
-           5. 頁尾
+           5. 頁尾 (單行 + 指定配色)
         ========================================= */
         .site-footer {
-            margin-top: 0; padding: 10px 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px;
-            background: rgba(255, 255, 255, 0.9); border-radius: 20px; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-top: 0; 
+            padding: 10px 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: row; /* 單行水平排列 */
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; 
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 20px; 
+            backdrop-filter: blur(5px); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .footer-brand { font-size: 1.5rem; font-weight: 900; color: #FFD700; -webkit-text-stroke: 1.5px #000000; paint-order: stroke fill; letter-spacing: 1px; }
-        .footer-dev-container { font-size: 1.2rem; font-weight: 800; display: flex; gap: 2px; }
-        .text-green { color: #2E7D32; } 
-        .text-black { color: #000000; }
+        
+        .footer-brand {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #FFD700; /* 金黃色 */
+            -webkit-text-stroke: 1.5px #000000; /* 黑色外框 */
+            paint-order: stroke fill;
+            letter-spacing: 0.5px;
+        }
+        
+        .footer-dev-container {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: flex;
+            gap: 2px;
+            align-items: baseline;
+        }
+
+        .text-green { color: #2E7D32; } /* 深綠色 */
+        .text-black { color: #000000; } /* 黑色 */
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(79, 195, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
@@ -137,7 +154,7 @@
             #title-text { font-size: 3.5rem; }
             .pika-btn { width: 150px; height: 120px; }
             .hud { font-size: 1.3rem; }
-            .site-footer { gap: 5px; margin-top: 10px; padding: 15px 30px;}
+            .site-footer { gap: 15px; margin-top: 10px; padding: 15px 30px;}
             .footer-brand { font-size: 1.8rem; }
             .footer-dev-container { font-size: 1.5rem; }
         }
@@ -182,7 +199,7 @@
             <div id="game-container">
                 <div class="hud">
                     <div class="hud-row">
-                        <div class="stopwatch">Time: <span id="precise-timer">0.00</span></div>
+                        <div style="font-family:'Courier New', monospace; font-weight:bold; color:#D32F2F; font-variant-numeric: tabular-nums;">Time: <span id="precise-timer">0.00</span></div>
                         <div>Correct: <span id="score">0</span>/10</div>
                     </div>
                     <div class="progress-container">
@@ -214,24 +231,31 @@
         </div>
     </div>
 
-    <div class="site-footer">
-        <div class="footer-brand">Ace English X</div>
-        <div class="footer-dev-container">
-            <span class="text-green">翊華教育 製作</span>
-        </div>
-    </div>
+    <div class="site-footer"><div class="footer-brand">Ace English X</div><div class="footer-dev-container"><span class="text-green">翊華教育</span><span class="text-black">製作</span></div></div>
 
     <script>
         // 15 種交通工具
         const wordData = [
-            { w: "Car", t: "car" }, { w: "Bus", t: "bus" }, { w: "Taxi", t: "taxi" }, { w: "Police Car", t: "police" },
-            { w: "Ambulance", t: "ambulance" }, { w: "Fire Truck", t: "firetruck" }, { w: "Bicycle", t: "bicycle" }, { w: "Motorcycle", t: "motorcycle" },
-            { w: "Train", t: "train" }, { w: "Airplane", t: "airplane" }, { w: "Helicopter", t: "helicopter" }, { w: "Boat", t: "boat" },
-            { w: "Ship", t: "ship" }, { w: "Truck", t: "truck" }, { w: "Rocket", t: "rocket" }
+            { w: "Car", t: "car" }, 
+            { w: "Bus", t: "bus" }, 
+            { w: "Taxi", t: "taxi" }, 
+            { w: "Police Car", t: "police" },
+            { w: "Ambulance", t: "ambulance" }, 
+            { w: "Fire Truck", t: "firetruck" }, 
+            { w: "Bicycle", t: "bicycle" }, 
+            { w: "Motorcycle", t: "motorcycle" },
+            { w: "Train", t: "train" }, 
+            { w: "Airplane", t: "airplane" }, 
+            { w: "Helicopter", t: "helicopter" }, 
+            { w: "Boat", t: "boat" },
+            { w: "Ship", t: "ship" }, 
+            { w: "Truck", t: "truck" }, 
+            { w: "Rocket", t: "rocket" }
         ];
 
         function getSVG(type) {
-            let c = ''; const s = 'stroke="#333" stroke-width="3"'; 
+            let c = ''; 
+            const s = 'stroke="#333" stroke-width="3"'; 
             switch (type) {
                 case 'car': c = `<path d="M 15 55 L 25 35 H 75 L 85 55 V 70 H 15 Z" fill="#42A5F5" ${s}/><path d="M 30 38 H 70 L 80 55 H 20 Z" fill="#BBDEFB" ${s}/><circle cx="30" cy="70" r="10" fill="#333"/><circle cx="30" cy="70" r="4" fill="#999"/><circle cx="70" cy="70" r="10" fill="#333"/><circle cx="70" cy="70" r="4" fill="#999"/>`; break;
                 case 'bus': c = `<rect x="10" y="25" width="80" height="45" rx="5" fill="#FFB74D" ${s}/><rect x="15" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="35" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="55" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="75" y="30" width="10" height="15" fill="#E3F2FD" ${s}/><circle cx="25" cy="70" r="8" fill="#333"/><circle cx="75" cy="70" r="8" fill="#333"/><path d="M 10 50 H 90" stroke="#E65100" stroke-width="2"/>`; break;
@@ -255,7 +279,7 @@
         let currentScore = 0; let combo = 0; let lives = 3; let maxTime = 5000;
         let timerInterval; let isPlaying = false; let highScore = 0; let currentTarget = null;
         let synth = window.speechSynthesis;
-        let gameStartTime; // 全局計時器開始時間
+        let gameStartTime; 
 
         const elMenu = document.getElementById('menu-layer');
         const elGame = document.getElementById('game-container');
@@ -294,11 +318,8 @@
             elGame.style.display = "block";
             confettiActive = false; ctx.clearRect(0,0,canvas.width, canvas.height);
             isPlaying = true; 
-            
-            // 啟動精確計時器
             gameStartTime = Date.now();
             updatePreciseTimer();
-
             resizeCanvas(); nextRound();
         }
 
@@ -363,7 +384,6 @@
                 currentScore++;
                 elScore.innerText = currentScore;
                 
-                // 10 題為 100%
                 let progressPct = (currentScore / 10) * 100;
                 if (progressPct > 100) progressPct = 100;
                 elProgress.style.width = progressPct + "%";
@@ -389,21 +409,16 @@
         }
 
         function gameWon() {
-            isPlaying = false; // 停止計時
-            
-            // 計算最終時間
+            isPlaying = false;
             let finalTime = ((Date.now() - gameStartTime) / 1000).toFixed(2);
             elFinalTimeText.innerText = "Total Time: " + finalTime + "s";
-
             const cheer = cheerWords[Math.floor(Math.random() * cheerWords.length)];
             elMenu.style.display = "flex"; elGame.style.display = "none";
             document.getElementById('spelling-overlay').classList.remove('show-spelling');
-            
             elFinalMessage.style.display = "block";
             elWinText.innerText = cheer;
             document.getElementById('title-text').innerText = "Mission Complete!";
             btnStart.innerText = "PLAY AGAIN";
-
             if (currentScore > highScore) {
                 highScore = currentScore;
                 localStorage.setItem('vehicleSvgHighScore', highScore);
@@ -421,7 +436,6 @@
             document.getElementById('final-score').innerText = currentScore;
             document.getElementById('title-text').innerText = "Game Over";
             btnStart.innerText = "TRY AGAIN";
-            
             if (currentScore > highScore) {
                 highScore = currentScore;
                 localStorage.setItem('vehicleSvgHighScore', highScore);
@@ -504,4 +518,3 @@
     </script>
 </body>
 </html>
-
