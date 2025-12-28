@@ -7,14 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         /* =========================================
-           1. 基礎設定
+           1. 基礎設定 (緊湊佈局)
         ========================================= */
         * { box-sizing: border-box; font-family: 'Nunito', sans-serif; }
         body {
             background-color: #232323;
             background-image: radial-gradient(circle at center, #444 0%, #222 100%);
-            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; color: #eee; touch-action: manipulation; padding: 20px 10px;
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            min-height: 100vh; 
+            color: #eee; 
+            touch-action: manipulation; 
+            padding: 10px; /* 減少邊距 */
+            gap: 15px; /* 控制遊戲機與頁尾的距離，讓它們靠近 */
         }
 
         /* =========================================
@@ -24,23 +32,25 @@
             position: relative;
             width: 100%;
             max-width: 800px;
-            min-height: 600px;
+            /* 使用 Flex 讓高度自動適應內容，不再強制撐大 */
+            aspect-ratio: 3/4; 
+            max-height: 85vh; /* 確保不超過手機高度 */
             background: linear-gradient(145deg, #FF5E75, #DC0A2D);
             border-radius: 30px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: inset 5px 5px 15px rgba(255,255,255,0.4), inset -5px -5px 15px rgba(0,0,0,0.3), 0 20px 40px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            margin-bottom: 30px; /* 增加底部距離，給大標題空間 */
+            margin-bottom: 0; /* 移除底部邊距，讓頁尾靠近 */
         }
 
         .pokedex-top {
-            display: flex; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px;
+            display: flex; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px;
             border-bottom: 3px solid rgba(0,0,0,0.2); flex-shrink: 0;
         }
-        .camera-lens { width: 60px; height: 60px; background: radial-gradient(circle at 30% 30%, #4FC3F7, #01579B); border-radius: 50%; border: 5px solid #eee; box-shadow: 0 0 15px rgba(79, 195, 247, 0.8); margin-right: 20px; animation: pulse 3s infinite; }
-        .small-lights { display: flex; gap: 10px; margin-top: 8px; }
-        .light { width: 15px; height: 15px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.3); box-shadow: inset 2px 2px 5px rgba(255,255,255,0.5); }
+        .camera-lens { width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #4FC3F7, #01579B); border-radius: 50%; border: 4px solid #eee; box-shadow: 0 0 15px rgba(79, 195, 247, 0.8); margin-right: 15px; animation: pulse 3s infinite; }
+        .small-lights { display: flex; gap: 8px; margin-top: 5px; }
+        .light { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.3); box-shadow: inset 2px 2px 5px rgba(255,255,255,0.5); }
         .light.red { background: #FF0000; } .light.yellow { background: #FFEB3B; } .light.green { background: #00E676; }
 
         /* =========================================
@@ -49,46 +59,48 @@
         #game-wrapper {
             position: relative;
             width: 100%;
-            flex-grow: 1;
+            flex-grow: 1; /* 填滿剩餘空間 */
             background: #222; border-radius: 20px; border: 4px solid #555; overflow: hidden; box-shadow: inset 0 0 20px #000;
-            min-height: 400px;
+            display: flex; flex-direction: column;
         }
 
         #game-container {
             width: 100%; height: 100%;
             background: linear-gradient(to bottom, #90CAF9, #E0E0E0);
-            padding: 20px; display: none; flex-direction: column; position: relative; z-index: 10;
+            padding: 15px; display: none; flex-direction: column; position: relative; z-index: 10;
+            flex-grow: 1;
         }
         #game-container[style*="display: block"] { display: flex !important; }
 
-        .hud { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; margin-bottom: 15px; color: #333; font-weight: 900; background: rgba(255,255,255,0.7); padding: 10px 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(5px); flex-shrink: 0;}
-        .hearts-container span { font-size: 1.4rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
-        .timer-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px; overflow: hidden; flex-shrink: 0;}
+        .hud { display: flex; justify-content: space-between; align-items: center; font-size: 1rem; margin-bottom: 10px; color: #333; font-weight: 900; background: rgba(255,255,255,0.7); padding: 8px 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(5px); flex-shrink: 0;}
+        .hearts-container span { font-size: 1.2rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        .timer-bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 10px; overflow: hidden; flex-shrink: 0;}
         .timer-bar-fill { height: 100%; background: linear-gradient(to right, #4CAF50, #8BC34A); width: 100%; border-radius: 10px; transition: width 0.1s linear; }
 
-        .pika-btn { background: none; border: none; width: 120px; height: 100px; cursor: pointer; margin: 0 auto 5px auto; display: block; transition: transform 0.1s; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); flex-shrink: 0;}
+        .pika-btn { background: none; border: none; width: 100px; height: 80px; cursor: pointer; margin: 0 auto 5px auto; display: block; transition: transform 0.1s; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); flex-shrink: 0;}
         .pika-btn:active { transform: scale(0.9); }
         .pika-svg { width: 100%; height: 100%; }
-        .listen-hint { font-size: 0.9rem; color: #555; text-align: center; margin-bottom: 15px; font-weight: bold; flex-shrink: 0;}
+        .listen-hint { font-size: 0.8rem; color: #555; text-align: center; margin-bottom: 10px; font-weight: bold; flex-shrink: 0;}
 
         /* --- SVG 選項按鈕 --- */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 10px;
             flex-grow: 1;
-            min-height: 200px;
+            /* 讓按鈕區自動伸縮，不設固定高度 */
             align-items: center;
             justify-items: center;
         }
         .option-btn {
-            background: #FFF; border-radius: 20px; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: #FFF; border-radius: 15px; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             display: flex; align-items: center; justify-content: center;
-            padding: 10px; transition: all 0.2s; border: 3px solid transparent;
+            padding: 8px; transition: all 0.2s; border: 3px solid transparent;
             width: 100%;
-            aspect-ratio: 1 / 1;
-            max-height: 160px;
+            height: 100%; /* 填滿網格 */
+            aspect-ratio: 1 / 1; /* 保持方形 */
+            max-height: 140px; /* 稍微縮小最大高度，適應手機 */
         }
         .option-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .option-svg { width: 100%; height: 100%; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
@@ -96,70 +108,75 @@
         .wrong { background-color: #FFCDD2 !important; border-color: #C62828 !important; opacity: 0.6; pointer-events: none; }
 
         /* =========================================
-           4. 選單、標題
+           4. 選單、標題與頁尾優化
         ========================================= */
         #menu-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; color: #eee; padding: 20px; text-align: center; }
 
         #title-text {
-            font-size: 2.8rem;
-            margin: 10px 0 20px 0;
+            font-size: 2.2rem;
+            margin: 10px 0 15px 0;
             color: #ffffff;
             text-shadow: 0 3px 5px rgba(0,0,0,0.3);
             font-weight: 900;
             letter-spacing: 1px;
         }
 
-        /* =========================================
-           5. 頁尾樣式 (重點修改)
-        ========================================= */
+        /* 頁尾樣式 (優化版) */
         .site-footer {
-            margin-top: auto;
-            padding: 15px;
+            /* 移除 top margin，靠 gap 控制距離 */
+            margin-top: 0; 
+            padding: 8px 20px;
             text-align: center;
-            font-size: 1.5rem; /* 字體變大 */
-            font-weight: 900;
-            letter-spacing: 1px;
-            line-height: 1.4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; /* 手機寬度不夠時自動換行 */
+            gap: 10px;
+            
+            /* 增加一個很淡的背景條，連結視覺 */
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
         }
         
         .footer-gold {
+            font-size: 1.4rem;
+            font-weight: 900;
             color: #FFD700; /* 金黃色 */
-            text-shadow: 2px 2px 0 #000, 0 0 10px rgba(255, 215, 0, 0.3); /* 加上黑色陰影讓它跳出來 */
-            margin-right: 10px;
-            display: inline-block;
+            text-shadow: 2px 2px 0 #000; /* 黑色陰影增加對比 */
         }
         
         .footer-green {
+            font-size: 1.2rem;
+            font-weight: 900;
             color: #2E7D32; /* 深綠色 */
-            /* 使用多重 text-shadow 模擬厚實的白色描邊 */
-            text-shadow: 
-                -2px -2px 0 #fff,  
-                 2px -2px 0 #fff,
-                -2px  2px 0 #fff,
-                 2px  2px 0 #fff,
-                 4px 4px 5px rgba(0,0,0,0.5); /* 再加一層投影增加立體感 */
-            padding: 0 5px;
-            display: inline-block;
+            /* 移除描邊，改用淺色圓角膠囊背景 */
+            background-color: #E8F5E9; /* 淺綠白色背景 */
+            padding: 5px 15px;
+            border-radius: 50px; /* 圓弧造型 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-shadow: none; /* 移除文字陰影，保持乾淨 */
         }
 
-        .btn-start { padding: 15px 50px; font-size: 1.3rem; background: linear-gradient(to right, #3B4CCA, #5C6BC0); color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 30px; box-shadow: 0 10px 20px rgba(59, 76, 202, 0.4); font-weight: 900; transition: transform 0.2s;}
+        .btn-start { padding: 12px 40px; font-size: 1.2rem; background: linear-gradient(to right, #3B4CCA, #5C6BC0); color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px; box-shadow: 0 10px 20px rgba(59, 76, 202, 0.4); font-weight: 900; transition: transform 0.2s;}
         .btn-start:active { transform: scale(0.95); }
-        #spelling-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-size: 4rem; font-weight: 900; color: #FFCB05; text-shadow: 2px 2px 0 #3B4CCA, 0 0 20px rgba(255,203,5,0.5); opacity: 0; pointer-events: none; z-index: 30; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; width: 100%; text-align: center; }
+        #spelling-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-size: 3.5rem; font-weight: 900; color: #FFCB05; text-shadow: 2px 2px 0 #3B4CCA, 0 0 20px rgba(255,203,5,0.5); opacity: 0; pointer-events: none; z-index: 30; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; width: 100%; text-align: center; }
         .show-spelling { opacity: 1 !important; transform: translate(-50%, -50%) scale(1) !important; }
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
-        .best-score-box { background: rgba(255,255,255,0.15); border: 2px solid #FFCB05; color: #FFCB05; padding: 8px 25px; border-radius: 20px; font-weight: bold; font-size: 1.1rem;}
+        .best-score-box { background: rgba(255,255,255,0.15); border: 2px solid #FFCB05; color: #FFCB05; padding: 5px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem;}
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(79, 195, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 
         /* 大螢幕適配 */
         @media (min-width: 768px) {
-            .pokedex-frame { padding: 35px; border-radius: 50px; }
+            .pokedex-frame { padding: 35px; border-radius: 50px; aspect-ratio: auto; min-height: 700px; }
             #title-text { font-size: 3.5rem; }
             .pika-btn { width: 150px; height: 120px; }
             .hud { font-size: 1.3rem; }
-            /* 大螢幕時字體更大 */
-            .site-footer { font-size: 1.8rem; }
+            .site-footer { padding: 15px 30px; border-radius: 50px; gap: 20px;}
+            .footer-gold { font-size: 1.8rem; }
+            .footer-green { font-size: 1.5rem; padding: 8px 25px; }
         }
     </style>
 </head>
@@ -248,36 +265,22 @@
         // 交通工具 SVG 繪圖函式 (黑色描邊增強)
         function getSVG(type) {
             let c = ''; 
-            const s = 'stroke="#333" stroke-width="3"'; // 通用描邊設定
+            const s = 'stroke="#333" stroke-width="3"'; 
             switch (type) {
                 case 'car': c = `<path d="M 15 55 L 25 35 H 75 L 85 55 V 70 H 15 Z" fill="#42A5F5" ${s}/><path d="M 30 38 H 70 L 80 55 H 20 Z" fill="#BBDEFB" ${s}/><circle cx="30" cy="70" r="10" fill="#333"/><circle cx="30" cy="70" r="4" fill="#999"/><circle cx="70" cy="70" r="10" fill="#333"/><circle cx="70" cy="70" r="4" fill="#999"/>`; break;
-                
                 case 'bus': c = `<rect x="10" y="25" width="80" height="45" rx="5" fill="#FFB74D" ${s}/><rect x="15" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="35" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="55" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="75" y="30" width="10" height="15" fill="#E3F2FD" ${s}/><circle cx="25" cy="70" r="8" fill="#333"/><circle cx="75" cy="70" r="8" fill="#333"/><path d="M 10 50 H 90" stroke="#E65100" stroke-width="2"/>`; break;
-                
                 case 'taxi': c = `<path d="M 15 55 L 25 35 H 75 L 85 55 V 70 H 15 Z" fill="#FDD835" ${s}/><path d="M 30 38 H 70 L 80 55 H 20 Z" fill="#E3F2FD" ${s}/><rect x="40" y="28" width="20" height="7" fill="#333" ${s}/><circle cx="30" cy="70" r="10" fill="#333"/><circle cx="30" cy="70" r="4" fill="#999"/><circle cx="70" cy="70" r="10" fill="#333"/><circle cx="70" cy="70" r="4" fill="#999"/><path d="M 15 58 H 85" stroke="#333" stroke-width="2" stroke-dasharray="4,4"/>`; break;
-                
                 case 'police': c = `<path d="M 15 55 L 25 35 H 75 L 85 55 V 70 H 15 Z" fill="#333" ${s}/><path d="M 15 55 L 25 55 L 25 70 L 15 70 Z" fill="white"/><path d="M 75 55 L 85 55 L 85 70 L 75 70 Z" fill="white"/><rect x="35" y="55" width="30" height="15" fill="white"/><path d="M 30 38 H 70 L 80 55 H 20 Z" fill="#E3F2FD" ${s}/><rect x="40" y="28" width="10" height="7" fill="#F44336" ${s}/><rect x="50" y="28" width="10" height="7" fill="#2196F3" ${s}/><circle cx="30" cy="70" r="10" fill="#333"/><circle cx="30" cy="70" r="4" fill="#999"/><circle cx="70" cy="70" r="10" fill="#333"/><circle cx="70" cy="70" r="4" fill="#999"/>`; break;
-                
                 case 'ambulance': c = `<rect x="10" y="25" width="80" height="45" rx="5" fill="#FAFAFA" ${s}/><path d="M 60 25 V 70" stroke="#EEEEEE" stroke-width="2"/><rect x="15" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="45" y="35" width="25" height="25" fill="#F44336"/><rect x="53" y="25" width="8" height="45" fill="#FAFAFA"/><rect x="45" y="43" width="25" height="8" fill="#FAFAFA"/><circle cx="25" cy="70" r="8" fill="#333"/><circle cx="75" cy="70" r="8" fill="#333"/><rect x="40" y="20" width="10" height="5" fill="#F44336" ${s}/>`; break;
-                
                 case 'firetruck': c = `<rect x="10" y="35" width="60" height="35" fill="#F44336" ${s}/><rect x="70" y="25" width="25" height="45" fill="#F44336" ${s}/><rect x="75" y="30" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="15" y="25" width="50" height="8" fill="#FFCC80" ${s}/><line x1="20" y1="25" x2="20" y2="33" stroke="#333" stroke-width="2"/><line x1="30" y1="25" x2="30" y2="33" stroke="#333" stroke-width="2"/><line x1="40" y1="25" x2="40" y2="33" stroke="#333" stroke-width="2"/><line x1="50" y1="25" x2="50" y2="33" stroke="#333" stroke-width="2"/><line x1="60" y1="25" x2="60" y2="33" stroke="#333" stroke-width="2"/><circle cx="25" cy="70" r="8" fill="#333"/><circle cx="50" cy="70" r="8" fill="#333"/><circle cx="80" cy="70" r="8" fill="#333"/>`; break;
-                
                 case 'bicycle': c = `<circle cx="25" cy="65" r="15" fill="none" stroke="#333" stroke-width="4"/><circle cx="75" cy="65" r="15" fill="none" stroke="#333" stroke-width="4"/><path d="M 25 65 L 45 65 L 60 40 L 75 65" stroke="#F44336" stroke-width="3" fill="none"/><path d="M 45 65 L 35 40 L 60 40" stroke="#F44336" stroke-width="3" fill="none"/><path d="M 35 40 L 30 30" stroke="#333" stroke-width="3"/><path d="M 25 30 L 35 30" stroke="#333" stroke-width="3"/><path d="M 45 65 L 45 55 L 50 55" stroke="#333" stroke-width="3"/><path d="M 60 40 L 60 35" stroke="#333" stroke-width="3"/><rect x="55" y="33" width="10" height="2" fill="#333"/>`; break;
-                
                 case 'motorcycle': c = `<circle cx="25" cy="65" r="12" fill="#333" stroke="#555" stroke-width="2"/><circle cx="75" cy="65" r="12" fill="#333" stroke="#555" stroke-width="2"/><path d="M 25 65 L 40 50 L 60 50 L 70 40" stroke="#1976D2" stroke-width="6" fill="none"/><path d="M 40 50 L 45 35" stroke="#333" stroke-width="4"/><rect x="40" y="35" width="25" height="10" rx="5" fill="#333"/><path d="M 60 50 L 75 65" stroke="#555" stroke-width="4"/><rect x="68" y="38" width="8" height="4" fill="#333"/>`; break;
-                
                 case 'train': c = `<rect x="25" y="30" width="50" height="40" fill="#43A047" ${s}/><rect x="75" y="45" width="15" height="25" fill="#43A047" ${s}/><rect x="10" y="20" width="5" height="15" fill="#333"/><circle cx="35" cy="70" r="8" fill="#333" stroke="#555" stroke-width="2"/><circle cx="55" cy="70" r="8" fill="#333" stroke="#555" stroke-width="2"/><circle cx="80" cy="70" r="6" fill="#333" stroke="#555" stroke-width="2"/><rect x="30" y="35" width="15" height="15" fill="#E3F2FD" ${s}/><rect x="55" y="35" width="15" height="15" fill="#E3F2FD" ${s}/><path d="M 25 70 H 90" stroke="#333" stroke-width="2"/><path d="M 12 15 Q 5 5 15 5" stroke="#9E9E9E" stroke-width="2" fill="none"/>`; break;
-                
                 case 'airplane': c = `<path d="M 10 50 Q 10 40 30 40 H 80 Q 95 40 95 50 Q 95 60 80 60 H 30 Q 10 60 10 50" fill="#ECEFF1" ${s}/><path d="M 40 40 L 50 20 H 65 L 60 40" fill="#90A4AE" ${s}/><path d="M 40 60 L 50 80 H 65 L 60 60" fill="#90A4AE" ${s}/><path d="M 80 40 L 85 25 H 95 L 90 40" fill="#90A4AE" ${s}/><circle cx="25" cy="50" r="3" fill="#E3F2FD" ${s}/><circle cx="35" cy="50" r="3" fill="#E3F2FD" ${s}/><circle cx="45" cy="50" r="3" fill="#E3F2FD" ${s}/>`; break;
-                
                 case 'helicopter': c = `<ellipse cx="50" cy="50" rx="25" ry="20" fill="#FF7043" ${s}/><path d="M 25 50 L 5 50 L 5 40 L 10 40 L 10 60 L 5 60 L 5 50" fill="#FF7043" ${s}/><path d="M 50 30 V 20 H 20 M 50 20 H 80" stroke="#333" stroke-width="3"/><circle cx="50" cy="20" r="2" fill="#333"/><path d="M 60 50 Q 70 50 70 60 L 50 60" fill="#E3F2FD" ${s}/><path d="M 40 70 V 75 H 30 M 60 70 V 75 H 70 M 25 75 H 75" stroke="#333" stroke-width="3"/>`; break;
-                
                 case 'boat': c = `<path d="M 20 65 Q 50 85 80 65 L 70 50 H 30 Z" fill="#8D6E63" ${s}/><path d="M 50 50 V 15 L 75 35 L 50 45" fill="#E3F2FD" ${s}/><path d="M 50 15 L 25 35 L 50 45" fill="#2196F3" ${s}/><line x1="50" y1="15" x2="50" y2="50" stroke="#333" stroke-width="2"/>`; break;
-                
                 case 'ship': c = `<path d="M 15 60 L 25 45 H 75 L 85 60 Q 50 80 15 60" fill="#607D8B" ${s}/><rect x="35" y="30" width="30" height="15" fill="#CFD8DC" ${s}/><rect x="45" y="20" width="10" height="10" fill="#333" ${s}/><circle cx="40" cy="37" r="3" fill="#E3F2FD" ${s}/><circle cx="50" cy="37" r="3" fill="#E3F2FD" ${s}/><circle cx="60" cy="37" r="3" fill="#E3F2FD" ${s}/><path d="M 10 65 Q 30 75 50 65 Q 70 55 90 65" stroke="#2196F3" stroke-width="3" fill="none"/>`; break;
-                
                 case 'truck': c = `<rect x="10" y="30" width="50" height="35" fill="#FFA726" ${s}/><rect x="60" y="40" width="30" height="25" fill="#1565C0" ${s}/><rect x="65" y="45" width="10" height="10" fill="#E3F2FD" ${s}/><circle cx="25" cy="65" r="8" fill="#333" stroke="#555" stroke-width="2"/><circle cx="45" cy="65" r="8" fill="#333" stroke="#555" stroke-width="2"/><circle cx="75" cy="65" r="8" fill="#333" stroke="#555" stroke-width="2"/>`; break;
-                
                 case 'rocket': c = `<path d="M 50 10 Q 70 40 70 70 H 30 Q 30 40 50 10 Z" fill="#EEEEEE" ${s}/><circle cx="50" cy="45" r="10" fill="#E3F2FD" ${s}/><path d="M 30 70 L 20 85 H 35" fill="#F44336" ${s}/><path d="M 70 70 L 80 85 H 65" fill="#F44336" ${s}/><path d="M 40 70 L 45 80 L 50 75 L 55 80 L 60 70" fill="#FF9800"/>`; break;
             }
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${c}</svg>`;
@@ -300,7 +303,7 @@
         const gameWrapper = document.getElementById('game-wrapper');
 
         window.onload = function() {
-            const savedScore = localStorage.getItem('vehicleSvgHighScore'); // key name
+            const savedScore = localStorage.getItem('vehicleSvgHighScore');
             if (savedScore) highScore = parseInt(savedScore);
             elHighScoreNum.innerText = highScore;
             resizeCanvas();
