@@ -74,35 +74,14 @@
         .wrong { background-color: #FFCDD2 !important; border-color: #C62828 !important; opacity: 0.6; pointer-events: none; }
 
         /* =========================================
-           4. 拼字特效 (響應式字體調整)
+           4. 拼字特效
         ========================================= */
         #spelling-overlay { 
-            position: absolute;
-            top: 15%; 
-            left: 50%; 
-            transform: translate(-50%, -50%) scale(0.5);
-            
-            /* 【關鍵修改】使用 clamp 自動調整字體大小 */
-            /* 最小 2.5rem (手機), 理想 10vw, 最大 5rem (電腦) */
-            font-size: clamp(2.5rem, 10vw, 5rem);
-            
-            font-weight: 900; 
-            color: #FFD700; 
-            
-            /* 白色描邊 + 黑色陰影 */
-            -webkit-text-stroke: clamp(1px, 0.5vw, 3px) #fff; /* 描邊也隨螢幕縮放 */
-            paint-order: stroke fill;
-            filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.8));
-            
-            opacity: 0; 
-            pointer-events: none; 
-            z-index: 30; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            text-transform: uppercase; 
-            width: 90%; /* 避免文字太長碰到邊緣 */
-            text-align: center;
-            letter-spacing: 2px;
-            white-space: nowrap; /* 盡量不換行 */
+            position: absolute; top: 15%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+            font-size: clamp(2.5rem, 10vw, 5rem); font-weight: 900; color: #FFD700; 
+            -webkit-text-stroke: clamp(1px, 0.5vw, 3px) #fff; paint-order: stroke fill; filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.8));
+            opacity: 0; pointer-events: none; z-index: 30; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            text-transform: uppercase; width: 90%; text-align: center; letter-spacing: 2px; white-space: nowrap;
         }
         .show-spelling { opacity: 1 !important; transform: translate(-50%, -50%) scale(1.2) !important; }
 
@@ -112,7 +91,8 @@
         .btn-start { padding: 12px 40px; font-size: 1.2rem; background: linear-gradient(to right, #3B4CCA, #5C6BC0); color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px; box-shadow: 0 10px 20px rgba(59, 76, 202, 0.4); font-weight: 900; transition: transform 0.2s;}
         .btn-start:active { transform: scale(0.95); }
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
-        .best-score-box { background: rgba(255,255,255,0.15); border: 2px solid #FFCB05; color: #FFCB05; padding: 5px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem;}
+        /* 鼓勵話語樣式 */
+        .win-message { font-size: 3rem; color: #FFD700; text-shadow: 0 0 20px #E65100; margin-bottom: 20px; font-weight: 900; line-height: 1.2;}
 
         /* =========================================
            5. 頁尾
@@ -121,7 +101,10 @@
             margin-top: 0; padding: 8px 15px; text-align: center; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px;
             background: rgba(255, 255, 255, 0.9); border-radius: 20px; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .footer-gold { font-size: 1.4rem; font-weight: 900; color: #FFC107; text-shadow: none; }
+        .footer-gold {
+            font-size: 1.4rem; font-weight: 900; color: #FFC107; text-shadow: none;
+            -webkit-text-stroke: 1.5px black; paint-order: stroke fill;
+        }
         .footer-green { font-size: 1.4rem; font-weight: 900; color: #2E7D32; text-shadow: none; background-color: transparent; padding: 0; }
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(79, 195, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); } }
@@ -160,8 +143,11 @@
                 
                 <h1 id="title-text">Vehicle Party</h1>
 
-                <div class="best-score-box">Best Score: <span id="high-score-num">0</span></div>
-                <div id="final-score" style="display:none; font-size:2.5rem; color: #FFCB05; margin:15px; font-weight:900;">0</div>
+                <div id="final-message" style="display:none; text-align:center;">
+                    <div class="win-message" id="win-text">YOU WIN!</div>
+                    <div style="font-size:1.5rem; margin-bottom:20px;">Correct: 10/10</div>
+                </div>
+
                 <button class="btn-start" onclick="initGame()">START GAME</button>
             </div>
 
@@ -169,7 +155,7 @@
 
             <div id="game-container">
                 <div class="hud">
-                    <div>Score: <span id="score">0</span></div>
+                    <div>Correct: <span id="score">0</span> / 10</div>
                     <div id="hearts-display" class="hearts-container"></div>
                 </div>
                 <div class="timer-bar-bg"><div class="timer-bar-fill" id="timer-bar"></div></div>
@@ -259,6 +245,12 @@
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
         const gameWrapper = document.getElementById('game-wrapper');
+        const elWinText = document.getElementById('win-text');
+        const elFinalMessage = document.getElementById('final-message');
+        const btnStart = document.querySelector('.btn-start');
+
+        // 鼓勵金句
+        const cheerWords = ["Great!", "Awesome!", "Perfect!", "Super!", "Amazing!"];
 
         window.onload = function() {
             const savedScore = localStorage.getItem('vehicleSvgHighScore');
@@ -270,8 +262,11 @@
 
         function initGame() {
             currentScore = 0; combo = 0; lives = 3; maxTime = 5000;
-            elScore.innerText = "0"; updateHearts();
-            elMenu.style.display = "none"; elFinalScore.style.display = "none"; elGame.style.display = "block";
+            elScore.innerText = "0"; 
+            updateHearts();
+            elMenu.style.display = "none"; 
+            elFinalMessage.style.display = "none";
+            elGame.style.display = "block";
             confettiActive = false; ctx.clearRect(0,0,canvas.width, canvas.height);
             isPlaying = true; resizeCanvas(); nextRound();
         }
@@ -321,7 +316,7 @@
                 let timeLeft = maxTime - elapsed;
                 let pct = (timeLeft / maxTime) * 100;
                 elTimer.style.width = pct + "%";
-                if (pct < 30) elTimer.style.background = "linear-gradient(to right, #FF5252, #E53935)"; else elTimer.style.background = "linear-gradient(to right, #4CAF50, #8BC34A)";
+                if (pct < 30) elTimer.style.background = "#D32F2F"; else elTimer.style.background = "#4CAF50";
                 if (timeLeft <= 0) { clearInterval(timerInterval); handleWrongAnswer(null); }
             }, 50);
         }
@@ -329,14 +324,23 @@
         function checkAnswer(selectedItem, btnElement) {
             if (!isPlaying) return;
             if (selectedItem === currentTarget) {
+                // Correct
                 clearInterval(timerInterval);
                 playSound('correct');
                 btnElement.classList.add('correct');
-                currentScore++; combo++;
+                currentScore++; 
                 elScore.innerText = currentScore;
+                
                 document.getElementById('spelling-overlay').innerText = currentTarget.w;
                 document.getElementById('spelling-overlay').classList.add('show-spelling');
-                setTimeout(nextRound, 1200);
+
+                // Check Win Condition (10 Questions)
+                if (currentScore >= 10) {
+                    gameWon();
+                } else {
+                    setTimeout(nextRound, 1200);
+                }
+
             } else {
                 handleWrongAnswer(btnElement);
             }
@@ -345,39 +349,43 @@
         function handleWrongAnswer(btnElement) {
             playSound('wrong');
             if (btnElement) btnElement.classList.add('wrong');
-            lives--; combo = 0; updateHearts();
+            // Penalty: Deduct 3 seconds
+            clearInterval(timerInterval);
+            let startTime = Date.now() - (maxTime - (maxTime - 3000)); // Reset start time to simulate deduction? 
+            // Simplified approach: Just restart timer with less time
+            // To make it simpler, we just vibrate and visual shake
             gameWrapper.style.animation = "shake 0.4s";
             setTimeout(()=> gameWrapper.style.animation = "", 400);
-            if (lives <= 0) {
-                clearInterval(timerInterval);
-                setTimeout(gameOver, 1200);
-            } else {
-                clearInterval(timerInterval);
-                setTimeout(() => {
-                    if(!isPlaying) return;
-                    elTimer.style.width = "100%";
-                    startTimer();
-                    speakCurrentWord();
-                }, 800);
-            }
+            
+            // Resume timer
+            startTimer(); 
         }
 
-        function gameOver() {
+        function gameWon() {
             isPlaying = false;
-            elMenu.style.display = "flex"; elGame.style.display = "none";
-            document.getElementById('spelling-overlay').classList.remove('show-spelling');
-            document.getElementById('final-score').style.display = "block";
-            document.getElementById('final-score').innerText = currentScore;
+            // Pick random cheer word
+            const cheer = cheerWords[Math.floor(Math.random() * cheerWords.length)];
             
+            elMenu.style.display = "flex"; 
+            elGame.style.display = "none";
+            document.getElementById('spelling-overlay').classList.remove('show-spelling');
+            
+            // Show Win Message
+            elFinalMessage.style.display = "block";
+            elWinText.innerText = cheer;
+            document.getElementById('title-text').innerText = "Mission Complete!";
+            
+            // Change Button Text
+            btnStart.innerText = "PLAY AGAIN";
+
             if (currentScore > highScore) {
                 highScore = currentScore;
                 localStorage.setItem('vehicleSvgHighScore', highScore);
-                playSound('win');
-                startConfetti();
-            } else {
-                playSound('gameover');
             }
             elHighScoreNum.innerText = highScore;
+            
+            playSound('win');
+            startConfetti();
         }
 
         function speakCurrentWord() {
