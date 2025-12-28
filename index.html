@@ -49,8 +49,16 @@
         }
         #game-container[style*="display: block"] { display: flex !important; }
 
-        .hud { display: flex; justify-content: space-between; align-items: center; font-size: 1rem; margin-bottom: 10px; color: #333; font-weight: 900; background: rgba(255,255,255,0.7); padding: 8px 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(5px); flex-shrink: 0;}
-        .hearts-container span { font-size: 1.2rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        .hud { 
+            display: flex; flex-direction: column; gap: 5px;
+            margin-bottom: 10px; color: #333; font-weight: 900; 
+            background: rgba(255,255,255,0.8); padding: 8px 15px; border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(5px); flex-shrink: 0;
+        }
+        .hud-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .progress-container { width: 100%; height: 10px; background: #E0E0E0; border-radius: 5px; overflow: hidden; border: 1px solid #ccc; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #FFC107, #FF9800); transition: width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); }
+
         .timer-bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 10px; overflow: hidden; flex-shrink: 0;}
         .timer-bar-fill { height: 100%; background: linear-gradient(to right, #4CAF50, #8BC34A); width: 100%; border-radius: 10px; transition: width 0.1s linear; }
 
@@ -91,21 +99,46 @@
         .btn-start { padding: 12px 40px; font-size: 1.2rem; background: linear-gradient(to right, #3B4CCA, #5C6BC0); color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px; box-shadow: 0 10px 20px rgba(59, 76, 202, 0.4); font-weight: 900; transition: transform 0.2s;}
         .btn-start:active { transform: scale(0.95); }
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
-        /* 鼓勵話語樣式 */
         .win-message { font-size: 3rem; color: #FFD700; text-shadow: 0 0 20px #E65100; margin-bottom: 20px; font-weight: 900; line-height: 1.2;}
+        .best-score-box { background: rgba(255,255,255,0.15); border: 2px solid #FFCB05; color: #FFCB05; padding: 5px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem;}
 
         /* =========================================
-           5. 頁尾
+           5. 頁尾 (顏色修正)
         ========================================= */
         .site-footer {
-            margin-top: 0; padding: 8px 15px; text-align: center; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px;
-            background: rgba(255, 255, 255, 0.9); border-radius: 20px; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-top: 0; 
+            padding: 10px 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 20px; 
+            backdrop-filter: blur(5px); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .footer-gold {
-            font-size: 1.4rem; font-weight: 900; color: #FFC107; text-shadow: none;
-            -webkit-text-stroke: 1.5px black; paint-order: stroke fill;
+        
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #FFD700; /* 金黃色 */
+            /* 黑色外框 */
+            -webkit-text-stroke: 1.2px #000000;
+            paint-order: stroke fill;
+            letter-spacing: 1px;
         }
-        .footer-green { font-size: 1.4rem; font-weight: 900; color: #2E7D32; text-shadow: none; background-color: transparent; padding: 0; }
+        
+        .footer-dev-container {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: flex;
+            gap: 2px;
+        }
+
+        .text-green { color: #2E7D32; } /* 深綠色 */
+        .text-black { color: #000000; } /* 黑色 */
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(79, 195, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 195, 247, 0); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
@@ -116,9 +149,9 @@
             #title-text { font-size: 3.5rem; }
             .pika-btn { width: 150px; height: 120px; }
             .hud { font-size: 1.3rem; }
-            .site-footer { gap: 20px; margin-top: 10px; padding: 15px 30px;}
-            .footer-gold { font-size: 1.8rem; }
-            .footer-green { font-size: 1.8rem; }
+            .site-footer { gap: 5px; margin-top: 10px; padding: 15px 30px;}
+            .footer-brand { font-size: 1.8rem; }
+            .footer-dev-container { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -143,10 +176,14 @@
                 
                 <h1 id="title-text">Vehicle Party</h1>
 
-                <div id="final-message" style="display:none; text-align:center;">
+                <div class="best-score-box">Best Score: <span id="high-score-num">0</span></div>
+                
+                <div id="final-message" style="display:none; text-align:center; margin-top: 15px;">
                     <div class="win-message" id="win-text">YOU WIN!</div>
                     <div style="font-size:1.5rem; margin-bottom:20px;">Correct: 10/10</div>
                 </div>
+
+                <div id="final-score" style="display:none; font-size:2.5rem; color: #FFCB05; margin:15px; font-weight:900;">0</div>
 
                 <button class="btn-start" onclick="initGame()">START GAME</button>
             </div>
@@ -155,9 +192,15 @@
 
             <div id="game-container">
                 <div class="hud">
-                    <div>Correct: <span id="score">0</span> / 10</div>
-                    <div id="hearts-display" class="hearts-container"></div>
+                    <div class="hud-row">
+                        <span>Score: <span id="score">0</span> / 10</span>
+                        <span>Level: <span id="level-display">1</span></span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-fill" id="progress-bar"></div>
+                    </div>
                 </div>
+                
                 <div class="timer-bar-bg"><div class="timer-bar-fill" id="timer-bar"></div></div>
 
                 <button class="pika-btn" onclick="speakCurrentWord()">
@@ -183,8 +226,11 @@
     </div>
 
     <div class="site-footer">
-        <span class="footer-gold">Ace English X</span>
-        <span class="footer-green">翊華教育製作</span>
+        <div class="footer-brand">Ace English X</div>
+        <div class="footer-dev-container">
+            <span class="text-green">翊華教育</span>
+            <span class="text-black">製作</span>
+        </div>
     </div>
 
     <script>
@@ -237,20 +283,20 @@
         const elMenu = document.getElementById('menu-layer');
         const elGame = document.getElementById('game-container');
         const elScore = document.getElementById('score');
-        const elHearts = document.getElementById('hearts-display');
+        const elLevel = document.getElementById('level-display');
         const elTimer = document.getElementById('timer-bar');
+        const elProgress = document.getElementById('progress-bar');
         const elOptions = document.getElementById('options-area');
         const elFinalScore = document.getElementById('final-score');
         const elHighScoreNum = document.getElementById('high-score-num');
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
         const gameWrapper = document.getElementById('game-wrapper');
-        const elWinText = document.getElementById('win-text');
-        const elFinalMessage = document.getElementById('final-message');
         const btnStart = document.querySelector('.btn-start');
+        const elFinalMessage = document.getElementById('final-message');
+        const elWinText = document.getElementById('win-text');
 
-        // 鼓勵金句
-        const cheerWords = ["Great!", "Awesome!", "Perfect!", "Super!", "Amazing!"];
+        const cheerWords = ["Awesome!", "Great Job!", "Fantastic!", "Super Star!", "Amazing!", "Excellent!"];
 
         window.onload = function() {
             const savedScore = localStorage.getItem('vehicleSvgHighScore');
@@ -261,29 +307,24 @@
         window.onresize = resizeCanvas;
 
         function initGame() {
-            currentScore = 0; combo = 0; lives = 3; maxTime = 5000;
-            elScore.innerText = "0"; 
-            updateHearts();
+            currentScore = 0; currentLevel = 1; maxTime = 5000;
+            elScore.innerText = "0"; elLevel.innerText = "1";
+            elProgress.style.width = "0%";
             elMenu.style.display = "none"; 
             elFinalMessage.style.display = "none";
+            elFinalScore.style.display = "none";
             elGame.style.display = "block";
             confettiActive = false; ctx.clearRect(0,0,canvas.width, canvas.height);
             isPlaying = true; resizeCanvas(); nextRound();
         }
 
-        function updateHearts() {
-            let heartStr = "";
-            for(let i=0; i<lives; i++) heartStr += "<span>❤️</span>";
-            for(let i=lives; i<3; i++) heartStr += "<span style='opacity:0.3'>🤍</span>";
-            elHearts.innerHTML = heartStr;
-        }
-
         function nextRound() {
             if (!isPlaying) return;
             document.getElementById('spelling-overlay').classList.remove('show-spelling');
-            maxTime = Math.max(1500, 5000 - (currentScore * 50));
+            maxTime = Math.max(2000, 5000 - (currentScore * 50)); 
             generateQuestion();
             elTimer.style.width = "100%";
+            elTimer.style.background = "linear-gradient(to right, #4CAF50, #8BC34A)";
             setTimeout(() => speakCurrentWord(), 400);
             startTimer();
         }
@@ -313,69 +354,58 @@
             timerInterval = setInterval(() => {
                 if (!isPlaying) { clearInterval(timerInterval); return; }
                 let elapsed = Date.now() - startTime;
-                let timeLeft = maxTime - elapsed;
+                timeLeft = maxTime - elapsed;
                 let pct = (timeLeft / maxTime) * 100;
                 elTimer.style.width = pct + "%";
-                if (pct < 30) elTimer.style.background = "#D32F2F"; else elTimer.style.background = "#4CAF50";
-                if (timeLeft <= 0) { clearInterval(timerInterval); handleWrongAnswer(null); }
+                if (pct < 30) elTimer.style.background = "#D32F2F";
+                if (timeLeft <= 0) { clearInterval(timerInterval); gameOver(); }
             }, 50);
         }
 
         function checkAnswer(selectedItem, btnElement) {
             if (!isPlaying) return;
             if (selectedItem === currentTarget) {
-                // Correct
                 clearInterval(timerInterval);
                 playSound('correct');
                 btnElement.classList.add('correct');
-                currentScore++; 
+                currentScore++;
                 elScore.innerText = currentScore;
                 
+                let progressPct = (currentScore % 10) * 10;
+                if (progressPct === 0 && currentScore > 0) progressPct = 100;
+                elProgress.style.width = progressPct + "%";
+
                 document.getElementById('spelling-overlay').innerText = currentTarget.w;
                 document.getElementById('spelling-overlay').classList.add('show-spelling');
 
-                // Check Win Condition (10 Questions)
-                if (currentScore >= 10) {
+                if (currentScore % 10 === 0) {
+                    currentLevel++;
+                    elLevel.innerText = currentLevel;
                     gameWon();
                 } else {
                     setTimeout(nextRound, 1200);
                 }
 
             } else {
-                handleWrongAnswer(btnElement);
+                playSound('wrong');
+                btnElement.classList.add('wrong');
+                gameWrapper.style.animation = "shake 0.4s";
+                setTimeout(()=> gameWrapper.style.animation = "", 400);
+                clearInterval(timerInterval);
+                maxTime = Math.max(0, timeLeft - 2000); 
+                if (maxTime <= 0) gameOver(); else startTimer(); 
             }
-        }
-
-        function handleWrongAnswer(btnElement) {
-            playSound('wrong');
-            if (btnElement) btnElement.classList.add('wrong');
-            // Penalty: Deduct 3 seconds
-            clearInterval(timerInterval);
-            let startTime = Date.now() - (maxTime - (maxTime - 3000)); // Reset start time to simulate deduction? 
-            // Simplified approach: Just restart timer with less time
-            // To make it simpler, we just vibrate and visual shake
-            gameWrapper.style.animation = "shake 0.4s";
-            setTimeout(()=> gameWrapper.style.animation = "", 400);
-            
-            // Resume timer
-            startTimer(); 
         }
 
         function gameWon() {
             isPlaying = false;
-            // Pick random cheer word
             const cheer = cheerWords[Math.floor(Math.random() * cheerWords.length)];
-            
-            elMenu.style.display = "flex"; 
-            elGame.style.display = "none";
+            elMenu.style.display = "flex"; elGame.style.display = "none";
             document.getElementById('spelling-overlay').classList.remove('show-spelling');
             
-            // Show Win Message
             elFinalMessage.style.display = "block";
             elWinText.innerText = cheer;
             document.getElementById('title-text').innerText = "Mission Complete!";
-            
-            // Change Button Text
             btnStart.innerText = "PLAY AGAIN";
 
             if (currentScore > highScore) {
@@ -383,9 +413,28 @@
                 localStorage.setItem('vehicleSvgHighScore', highScore);
             }
             elHighScoreNum.innerText = highScore;
-            
             playSound('win');
             startConfetti();
+        }
+
+        function gameOver() {
+            isPlaying = false;
+            elMenu.style.display = "flex"; elGame.style.display = "none";
+            document.getElementById('spelling-overlay').classList.remove('show-spelling');
+            document.getElementById('final-score').style.display = "block";
+            document.getElementById('final-score').innerText = currentScore;
+            document.getElementById('title-text').innerText = "Game Over";
+            btnStart.innerText = "TRY AGAIN";
+            
+            if (currentScore > highScore) {
+                highScore = currentScore;
+                localStorage.setItem('vehicleSvgHighScore', highScore);
+                playSound('win');
+                startConfetti();
+            } else {
+                playSound('gameover');
+            }
+            elHighScoreNum.innerText = highScore;
         }
 
         function speakCurrentWord() {
